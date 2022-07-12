@@ -101,31 +101,21 @@ def test_all_options_build():
     # the actual message is covered in another test above
     github_requests.post.assert_called_once()
     jenkins_requests.post.assert_called_once_with(
-        "https://ci.cfengine.com/job/build-and-deploy-docs-3.18/buildWithParameters/api/json",
-        data={
-            "DOCS_REV": "47",
-            "CORE_REV": "42",
-            "NOVA_REV": "43",
-            "ENTERPRISE_REV": "44",
-            "MASTERFILES_REV": "45",
-            "BUILDSCRIPTS_REV": "46",
-            "MISSION_PORTAL_REV": "48",
-            "LIBNTECH_REV": "49",
-            "DOCS_GEN_REV": "50",
-            "BASE_BRANCH": "3.18.x",
-            "RUN_ON_EXOTICS": True,
-            "NO_TESTS": True,
-            "BUILD_DESC": "Test PR Title @test-trusted-author (documentation#47 core#42 nova#43 enterprise#44 masterfiles#45 buildscripts#46 mission-portal#48 libntech#49 documentation-generator#50 3.18) - WITH EXOTICS [NO TESTS]",
-            "BUILD_DOCS": True,
-            "DOCS_BRANCH": "pr",
-            "NO_DEPLOYMENT_TESTS": True,
-            "NO_FR_TESTS": True,
-            "NO_STATIC_CHECKS": True,
-            "CONFIGURATIONS_FILTER": 'label == "PACKAGES_HUB_x86_64_linux_ubuntu_16"',
-        },
-        headers={"Jenkins-Crumb": "test-jenkins-crumb"},
-        auth=ANY,
+        'https://ci.cfengine.com/job/build-and-deploy-docs-3.18/buildWithParameters/api/json', data={'RUN_ON_EXOTICS': True, 'DOCS_REV': '47', 'CORE_REV': '42', 'NOVA_REV': '43', 'ENTERPRISE_REV': '44', 'MASTERFILES_REV': '45', 'BUILDSCRIPTS_REV': '46', 'MISSION_PORTAL_REV': '48', 'LIBNTECH_REV': '49', 'DOCS_GEN_REV': '50', 'BASE_BRANCH': '3.18.x', 'NO_TESTS': True, 'BUILD_DESC': 'Test PR Title @test-trusted-author (documentation#47 core#42 nova#43 enterprise#44 masterfiles#45 buildscripts#46 mission-portal#48 libntech#49 documentation-generator#50 3.18) - WITH EXOTICS [NO TESTS]'}, headers={'Jenkins-Crumb': 'test-jenkins-crumb'}, auth=ANY
     )
+
+def test_fast_docs_build_318():
+  github_requests, jenkins_requests = _trigger_build(
+    repo="documentation",
+    prs={"documentation": 42, "documentation-generator": 43},
+    comment="@cf-bottom trigger please",
+    base_branch="3.18"
+  )
+  github_requests.post.assert_called_once()
+  jenkins_requests.post.assert_called_once_with(
+    'https://ci.cfengine.com/job/fast-build-and-deploy-docs-3.18/buildWithParameters/api/json', data={'BUILD_DESC': 'Test PR Title @test-trusted-author (documentation#42 documentation-generator#43 3.18)'}, headers={'Jenkins-Crumb': 'test-jenkins-crumb'}, auth=ANY
+  )
+
 
 #def test_slow_docs_build():
 #  github_requests, jenkins_requests = _trigger_build(
@@ -133,10 +123,6 @@ def test_all_options_build():
 #    prs={"documentation: 42, "core": 43}
 #"documentation": 42,
 #"core": 43
-#def test_fast_docs_build_318():
-#"documentation": 42,
-#"core": 43,
-#base_branch="3.15.x"
 #def test_fast_docs_build_master():
 # difference here is that a build requested in core
 # with a documentation PR mention will build fast
