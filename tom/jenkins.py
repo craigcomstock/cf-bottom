@@ -77,15 +77,6 @@ class Jenkins:
         branches = ["{}#{}".format(r, p) for r, p in prs.items()]
         branches.append(branch)
         branches = " ".join(branches)
-        if prs:
-            for repo in prs:
-                param_name = repo.upper().replace("-", "_")
-                assert " " not in param_name
-                param_name = param_name + "_REV"
-                param_name = param_name.replace("DOCUMENTATION", "DOCS")
-                param_name = param_name.replace("GENERATOR", "GEN")
-                params[param_name] = str(prs[repo])
-        params["BASE_BRANCH"] = str(branch)
         if not user:
             user = self.username
         if exotics:
@@ -94,29 +85,25 @@ class Jenkins:
             description = "{} @{} ({})".format(title, user, branches)
         else:
             description = "Unnamed build ({})".format(user)
-        if exotics:
-            description += " - WITH EXOTICS"
-        if no_tests:
-            params["NO_TESTS"] = True
-            description += " [NO TESTS]"
+        if "fast-build-and-deploy-docs" not in path:
+            if prs:
+                for repo in prs:
+                    param_name = repo.upper().replace("-", "_")
+                    assert " " not in param_name
+                    param_name = param_name + "_REV"
+                    param_name = param_name.replace("DOCUMENTATION", "DOCS")
+                    param_name = param_name.replace("GENERATOR", "GEN")
+                    params[param_name] = str(prs[repo])
+            if docs:
+                params["BASE_BRANCH"] = "{}.x".format(branch)
+            else:
+                params["BASE_BRANCH"] = str(branch)
+            if exotics:
+                description += " - WITH EXOTICS"
+            if no_tests:
+                params["NO_TESTS"] = True
+                description += " [NO TESTS]"
         params["BUILD_DESC"] = description
-        if docs:
-            # building documentation
-            if params["BASE_BRANCH"] != "master":
-                params["BASE_BRANCH"] += ".x"
-            if "DOCS_REV" not in params:
-                params["DOCS_REV"] = str(branch)
-            if "DOCS_GEN_REV" not in params:
-                params["DOCS_GEN_REV"] = str(branch)
-            params["BUILD_DOCS"] = True
-            params["DOCS_BRANCH"] = "pr"
-            params["NO_TESTS"] = True
-            params["NO_DEPLOYMENT_TESTS"] = True
-            params["NO_FR_TESTS"] = True
-            params["NO_STATIC_CHECKS"] = True
-            params[
-                "CONFIGURATIONS_FILTER"
-            ] = 'label == "PACKAGES_HUB_x86_64_linux_ubuntu_16"'
         return self.post(path, params)
 
     def wait_for_queue(self, url):
