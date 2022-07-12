@@ -1,0 +1,218 @@
+def test_trigger_build_basic():
+    github_requests, jenkins_requests = _trigger_build(
+        repo="core",
+        prs={"core": 42, "nova": 43},
+        comment="@cf-bottom build please",
+        base_branch="3.15.x",
+    )
+
+    jenkins_requests.post.assert_called_once_with(
+        "https://ci.cfengine.com/job/pr-pipeline/buildWithParameters/api/json",
+        data={
+            "CORE_REV": "42",
+            "NOVA_REV": "43",
+            "BASE_BRANCH": "3.15.x",
+            "BUILD_DESC": "Test PR Title @test-trusted-author (core#42 nova#43 3.15.x)",
+        },
+        headers={"Jenkins-Crumb": "test-jenkins-crumb"},
+        auth=ANY,
+    )
+
+    # NOTE: below we test for the entire body of the bot comment back to the PR
+    # generally we should just use ANY instead since we don't want to have to change
+    # a bunch of tests here if we refactor the message in the main code.
+    github_requests.post.assert_called_once_with(
+        "https://github.com/cfengine/core/pulls/42/comment_reference",
+        headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
+        json={
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
+        },
+    )
+
+
+def test_exotics_build():
+    github_requests, jenkins_requests = _trigger_build(
+        repo="core",
+        prs={"core": 42, "nova": 43},
+        comment="@cf-bottom jenkins with exotics please",
+    )
+    jenkins_requests.post.assert_called_once_with(
+        "https://ci.cfengine.com/job/pr-pipeline/buildWithParameters/api/json",
+        data={
+            "CORE_REV": "42",
+            "NOVA_REV": "43",
+            "BASE_BRANCH": "master",
+            "RUN_ON_EXOTICS": True,
+            "BUILD_DESC": "Test PR Title @test-trusted-author (core#42 nova#43 master) - WITH EXOTICS",
+        },
+        headers={"Jenkins-Crumb": "test-jenkins-crumb"},
+        auth=ANY,
+    )
+    github_requests.post.assert_called_once_with(
+        "https://github.com/cfengine/core/pulls/42/comment_reference",
+        headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
+        json=ANY,
+    )
+
+
+def test_notest_build():
+    github_requests, jenkins_requests = _trigger_build(
+        repo="core",
+        prs={"core": 42, "nova": 43},
+        comment="@cf-bottom jenkins with no tests please",
+    )
+    jenkins_requests.post.assert_called_once_with(
+        "https://ci.cfengine.com/job/pr-pipeline/buildWithParameters/api/json",
+        data={
+            "CORE_REV": "42",
+            "NOVA_REV": "43",
+            "BASE_BRANCH": "master",
+            "NO_TESTS": True,
+            "BUILD_DESC": "Test PR Title @test-trusted-author (core#42 nova#43 master) [NO TESTS]",
+        },
+        headers={"Jenkins-Crumb": "test-jenkins-crumb"},
+        auth=ANY,
+    )
+    github_requests.post.assert_called_once_with(
+        "https://github.com/cfengine/core/pulls/42/comment_reference",
+        headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
+        json=ANY,
+    )
+
+
+def test_all_options_build():
+    github_requests, jenkins_requests = _trigger_build(
+        repo="documentation",
+        prs={
+            "core": 42,
+            "nova": 43,
+            "enterprise": 44,
+            "masterfiles": 45,
+            "buildscripts": 46,
+            "documentation": 47,
+            "mission-portal": 48,
+            "libntech": 49,
+            "documentation-generator": 50,
+        },
+        comment="@cf-bottom trigger jenkins build pipeline exotics no tests",
+        base_branch="3.18",  # documentation doesn't use the .x suffix
+    )
+    # github comment response is really the same every time, so just make sure it was called
+    # the actual message is covered in another test above
+    github_requests.post.assert_called_once()
+    jenkins_requests.post.assert_called_once_with(
+        "https://ci.cfengine.com/job/pr-pipeline/buildWithParameters/api/json",
+        data={
+            "DOCS_REV": "47",
+            "CORE_REV": "42",
+            "NOVA_REV": "43",
+            "ENTERPRISE_REV": "44",
+            "MASTERFILES_REV": "45",
+            "BUILDSCRIPTS_REV": "46",
+            "MISSION_PORTAL_REV": "48",
+            "LIBNTECH_REV": "49",
+            "DOCS_GEN_REV": "50",
+            "BASE_BRANCH": "3.18.x",
+            "RUN_ON_EXOTICS": True,
+            "NO_TESTS": True,
+            "BUILD_DESC": "Test PR Title @test-trusted-author (documentation#47 core#42 nova#43 enterprise#44 masterfiles#45 buildscripts#46 mission-portal#48 libntech#49 documentation-generator#50 3.18) - WITH EXOTICS [NO TESTS]",
+            "BUILD_DOCS": True,
+            "DOCS_BRANCH": "pr",
+            "NO_DEPLOYMENT_TESTS": True,
+            "NO_FR_TESTS": True,
+            "NO_STATIC_CHECKS": True,
+            "CONFIGURATIONS_FILTER": 'label == "PACKAGES_HUB_x86_64_linux_ubuntu_16"',
+        },
+        headers={"Jenkins-Crumb": "test-jenkins-crumb"},
+        auth=ANY,
+    )
+
+
+def xtest_slow_docs_master():
+    jenkins_request = _trigger_build(
+        repo="core",
+        prs={"core": 42, "documentation": 43},
+        comment="@cf-bottom jenkins thanks",
+    )  # base_branch defaults to "master"
+    print("jenkins_request = {}".format(jenkins_request))
+    assert jenkins_request == {}
+
+
+from unittest.mock import MagicMock, patch, ANY
+from tom.bot import Bot
+from tom.jenkins import Jenkins
+from tom.github import Comment
+
+bot_username = "cf-bottom"
+jenkins_base_url = "https://ci.cfengine.com/"
+jenkins_default_job = "pr-pipeline"
+trusted_author = "test-trusted-author"
+test_github_token = "test-github-token"
+test_jenkins_user = "test-jenkins-user"
+test_jenkins_token = "test-jenkins-token"
+test_jenkins_crumb = "test-jenkins-crumb"
+# had to refactor a response_choices item in config to remove random response in github reply comment
+config = {
+    "response_choices": ["Predictably"],
+    "username": bot_username,
+    "jenkins": jenkins_base_url,
+    "jenkins_job": jenkins_default_job,
+    "trusted": [trusted_author],
+    "secrets_data": {
+        "GITHUB_TOKEN": test_github_token,
+        "JENKINS_USER": test_jenkins_user,
+        "JENKINS_TOKEN": test_jenkins_token,
+        "JENKINS_CRUMB": test_jenkins_crumb,
+    },
+    "bot_features": {},
+}
+directory = ""
+interactive = False
+reports = []
+bot = Bot(config, config["secrets_data"], directory, interactive, reports)
+print("bot = {}".format(bot))
+
+
+@patch("tom.jenkins.requests")
+@patch("tom.github.requests")
+def _trigger_build(
+    github_requests, jenkins_requests, prs, comment, repo, base_branch="master"
+):
+    print("jenkins_requests = {}".format(jenkins_requests))
+    print("prs = {}".format(prs))
+    pr = MagicMock()
+    pr.author = trusted_author
+    pr.title = "Test PR Title"
+    pr.repo = repo
+    pr.short_repo_name = repo
+    pr.number = prs[repo]
+    pr.comments_url = (
+        "https://github.com/cfengine/{}/pulls/{}/comment_reference".format(
+            repo, pr.number
+        )
+    )
+    pr.merge_with = prs
+    pr.base_branch = base_branch
+    comment = Comment({"body": comment, "user": {"login": trusted_author}})
+    build_response = MagicMock()
+    build_response.status_code = 200
+    job = "something"
+    job_number = "22"
+    build_response.json.return_value = {
+        "executable": {
+            "number": job_number,
+            "url": "https://ci.cfengine.com/job/{}/{}".format(job, job_number),
+        }
+    }
+    jenkins_requests.post.return_value = build_response
+
+    jenkins_requests.get.return_value = build_response
+
+    github_response = MagicMock()
+    github_response.status_code = 200
+    github_response.json.return_value = {}
+    github_requests.post.return_value = github_response
+    bot.trigger_build(pr, comment)
+    print("github_requests: {}".format(github_requests.mock_calls))
+    print("jenkins_requests: {}".format(jenkins_requests.mock_calls))
+    return github_requests, jenkins_requests

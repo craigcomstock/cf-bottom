@@ -18,6 +18,8 @@ from tom.utils import confirmation, pretty, email_sha256, write_json
 
 class Bot:
     def __init__(self, config, secrets, directory, interactive, reports):
+        log.debug("Bot initialized with config: {}".format(config))
+        self.response_choices = config.get("response_choices", ["Alright", "Sure"])
         self.secrets = secrets
         self.directory = directory
         self.interactive = interactive
@@ -30,6 +32,7 @@ class Bot:
         self.repo_maintainers = config.get("repos", {})
         self.default_maintainers = config.get("reviewers", [])
         self.trusted = config.get("trusted", [])
+
         self.jenkins_repos = config.get("jenkins_repos", [])
         banned_emails = config.get("banned_emails", {})
         self.banned_emails = [v for v in banned_emails.values()]
@@ -182,7 +185,7 @@ class Bot:
             url=self.jenkins.url, job=self.jenkins.job_name, num=num
         )
         badge = "[![Build Status]({})]({})".format(badge_icon, badge_link)
-        response = random.choice(["Alright", "Sure"])
+        response = random.choice(self.response_choices)
         if badge_text:
             badge_text = "\n\n" + badge_text  # Under looks better
         buildcache = "http://buildcache.cfengine.com"
