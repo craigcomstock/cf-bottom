@@ -101,7 +101,7 @@ def test_all_options_build():
     # the actual message is covered in another test above
     github_requests.post.assert_called_once()
     jenkins_requests.post.assert_called_once_with(
-        "https://ci.cfengine.com/job/pr-pipeline/buildWithParameters/api/json",
+        "https://ci.cfengine.com/job/build-and-deploy-docs-3.18/buildWithParameters/api/json",
         data={
             "DOCS_REV": "47",
             "CORE_REV": "42",
@@ -127,16 +127,23 @@ def test_all_options_build():
         auth=ANY,
     )
 
-
-def xtest_slow_docs_master():
-    jenkins_request = _trigger_build(
-        repo="core",
-        prs={"core": 42, "documentation": 43},
-        comment="@cf-bottom jenkins thanks",
-    )  # base_branch defaults to "master"
-    print("jenkins_request = {}".format(jenkins_request))
-    assert jenkins_request == {}
-
+#def test_slow_docs_build():
+#  github_requests, jenkins_requests = _trigger_build(
+#    repo="documentation",
+#    prs={"documentation: 42, "core": 43}
+#"documentation": 42,
+#"core": 43
+#def test_fast_docs_build_318():
+#"documentation": 42,
+#"core": 43,
+#base_branch="3.15.x"
+#def test_fast_docs_build_master():
+# difference here is that a build requested in core
+# with a documentation PR mention will build fast
+# comment in the documentation PR with a core mention
+# to build slow (aka, really rebuild docs)
+#"core": 42,
+#"documentation": 43
 
 from unittest.mock import MagicMock, patch, ANY
 from tom.bot import Bot
