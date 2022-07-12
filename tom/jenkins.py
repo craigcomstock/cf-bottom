@@ -56,7 +56,23 @@ class Jenkins:
         docs=False,
         no_tests=False,
     ):
-        path = self.trigger_url
+        need_slow_build = [repo for repo in prs if repo in ["core", "enterprise", "nova", "masterfiles"]]
+        print("need_slow_build {}".format(need_slow_build))
+        job = "pr-pipeline"
+        if docs:
+            if need_slow_build:
+                job = "build-and-deploy-docs-{}".format(branch)
+                no_tests = True # but allow for override if specified
+            else:
+                job = "fast-build-and-deploy-docs-{}".format(branch)
+        else:
+            if "documentation" in prs:
+                job = "build-and-deploy-docs-{}".format(branch)
+                no_tests = False
+#        path = self.trigger_url
+        print("job is {}".format(job))
+        path = "{}job/{}/buildWithParameters/api/json".format(self.url, job)
+        print("path is {}".format(path))
         params = {}
         branches = ["{}#{}".format(r, p) for r, p in prs.items()]
         branches.append(branch)
