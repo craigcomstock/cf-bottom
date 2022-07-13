@@ -10,10 +10,10 @@ I trigger pull requests when someone mentions me in a GitHub Pull Request.
 If you have valid config and secrets in the current working directory, you can run:
 
 ```
-$ python3 self/tom --log-level INFO
+$ python3 -m tom --directory . --log-level info --interactive
 ```
 
-(In the above case, `self` is the repo folder, `tom` is the python package).
+(This assumes running in the repo folder, `.`, and interactive so you will be prompted before any actions are taken).
 
 Example on our (private) Jenkins:
 
