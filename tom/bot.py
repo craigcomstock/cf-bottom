@@ -178,6 +178,10 @@ class Bot:
             self.leave_review(pr)
 
     def comment_badge(self, pr, num, url, badge_text):
+        # TODO ooh boy, lots going on here, gonna have to refactor pretty hard
+        # maybe parse URL contents instead of saying we "just know", like pr-pipeline
+        # yeah, the existing badge URL for docs builds is wrong as-is :(
+        print("comment_badge(), pr={}, num={}, url={}, badge_text={}".format(pr, num, url, badge_text))
         badge_icon = "{url}/buildStatus/icon?job={job}&build={num}".format(
             url=self.jenkins.url, job=self.jenkins.job_name, num=num
         )

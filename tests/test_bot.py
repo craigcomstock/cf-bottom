@@ -250,17 +250,37 @@ def _trigger_build(
     comment = Comment({"body": comment, "user": {"login": trusted_author}})
     build_response = MagicMock()
     build_response.status_code = 200
-    job = "something"
     job_number = "22"
-    build_response.json.return_value = {
-        "executable": {
-            "number": job_number,
-            "url": "https://ci.cfengine.com/job/{}/{}".format(job, job_number),
-        }
-    }
-    jenkins_requests.post.return_value = build_response
 
-    jenkins_requests.get.return_value = build_response
+    def post_effect(path, data, headers, auth):
+        jenkins_requests._path = path.replace("buildWithParameters/api/json","")
+        print("saving _path = {}".format(jenkins_requests._path))
+        response = MagicMock(
+            status_code=200,
+        )
+        response.json.return_value =             {
+                "executable": {
+                    "number": job_number,
+                    "url": "{}{}".format(jenkins_requests._path, job_number),
+                }
+            }
+        return response
+
+    def get_effect(path, headers, auth):
+        print("saved _path is {}".format(jenkins_requests._path))
+        response = MagicMock(
+            status_code=200,
+        )
+        response.json.return_value =             {
+                "executable": {
+                    "number": job_number,
+                    "url": "{}{}".format(jenkins_requests._path, job_number),
+                }
+        }
+        return response
+    jenkins_requests.post.side_effect = post_effect
+
+    jenkins_requests.get.side_effect = get_effect
 
     github_response = MagicMock()
     github_response.status_code = 200
