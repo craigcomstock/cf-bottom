@@ -195,6 +195,7 @@ class Bot:
         new_comment = "{}, I triggered a build:\n\n{}{}\n\n**Jenkins:** {}\n\n**Packages:** {}".format(
             response, badge, badge_text, url, packages
         )
+        # TODO, if a build-and-deploy was triggered, include documentation
         if pr.short_repo_name.startswith("documentation"):
             docs = "{}/packages/build-documentation-pr/jenkins-pr-pipeline-{}/output/_site/".format(
                 buildcache, num

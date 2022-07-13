@@ -134,8 +134,10 @@ def test_fast_docs_build_318():
     jenkins_requests.post.assert_called_once_with(
         "https://ci.cfengine.com/job/fast-build-and-deploy-docs-3.18/buildWithParameters/api/json",
         data={
-            "BUILD_DESC": "Test PR Title @test-trusted-author (documentation#42 documentation-generator#43 3.18)",
             "BRANCH": "pr",
+            "DOCS_REV": "42",
+            "DOCS_GEN_REV": "43",
+            "BUILD_DESC": "Test PR Title @test-trusted-author (documentation#42 documentation-generator#43 3.18)",
         },
         headers={"Jenkins-Crumb": "test-jenkins-crumb"},
         auth=ANY,

@@ -95,15 +95,28 @@ class Jenkins:
             params["DOCS_BRANCH"] = "pr"
         if "fast-build-and-deploy-docs" in path:
             params["BRANCH"] = "pr"
+        repos_accepted = [
+            "core",
+            "enterprise",
+            "nova",
+            "masterfiles",
+            "documentation",
+            "documentation-generator",
+        ]
         if "fast-build-and-deploy-docs" not in path:
-            if prs:
-                for repo in prs:
-                    param_name = repo.upper().replace("-", "_")
-                    assert " " not in param_name
-                    param_name = param_name + "_REV"
-                    param_name = param_name.replace("DOCUMENTATION", "DOCS")
-                    param_name = param_name.replace("GENERATOR", "GEN")
-                    params[param_name] = str(prs[repo])
+            repos_accepted = [
+                "libntech",
+                "core",
+                "enterprise",
+                "nova",
+                "masterfiles",
+                "buildscripts",
+                "mission-portal",
+                "ldap",
+                "mender-qa",
+                "documentation",
+                "documentation-generator",
+            ]
             if docs:
                 params["BASE_BRANCH"] = "{}.x".format(branch)
             else:
@@ -113,6 +126,14 @@ class Jenkins:
             if no_tests:
                 params["NO_TESTS"] = True
                 description += " [NO TESTS]"
+        if prs:
+            for repo in [r for r in prs if r in repos_accepted]:
+                param_name = repo.upper().replace("-", "_")
+                assert " " not in param_name
+                param_name = param_name + "_REV"
+                param_name = param_name.replace("DOCUMENTATION", "DOCS")
+                param_name = param_name.replace("GENERATOR", "GEN")
+                params[param_name] = str(prs[repo])
         params["BUILD_DESC"] = description
         return self.post(path, params)
 
