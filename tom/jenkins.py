@@ -55,7 +55,9 @@ class Jenkins:
         user=None,
         docs=False,
         no_tests=False,
+        docs_branch="",  # path to which to upload docs on buildcache
     ):
+        params = {}
         need_slow_build = [
             repo
             for repo in prs
@@ -76,7 +78,6 @@ class Jenkins:
         print("job is {}".format(job))
         path = "{}job/{}/buildWithParameters/api/json".format(self.url, job)
         print("path is {}".format(path))
-        params = {}
         branches = ["{}#{}".format(r, p) for r, p in prs.items()]
         branches.append(branch)
         branches = " ".join(branches)
@@ -88,6 +89,10 @@ class Jenkins:
             description = "{} @{} ({})".format(title, user, branches)
         else:
             description = "Unnamed build ({})".format(user)
+        if "/build-and-deploy-docs" in path:
+            params["DOCS_BRANCH"] = docs_branch
+        if "fast-build-and-deploy-docs" in path:
+            params["BRANCH"] = docs_branch
         if "fast-build-and-deploy-docs" not in path:
             if prs:
                 for repo in prs:
