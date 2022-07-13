@@ -1,3 +1,4 @@
+import re
 import sys
 import random
 import json
@@ -177,32 +178,42 @@ class Bot:
         if "approve_prs" in self.bot_features:
             self.leave_review(pr)
 
-    def comment_badge(self, pr, num, url, badge_text):
+    def comment_badge(self, pr, job_number, job_url, badge_text):
+        # job_url is something like this: url=https://ci.cfengine.com/job/build-and-deploy-docs-master/22
+        # so we can parse out the job name, the bit after job/ and before /{job_number}
         # TODO ooh boy, lots going on here, gonna have to refactor pretty hard
         # maybe parse URL contents instead of saying we "just know", like pr-pipeline
         # yeah, the existing badge URL for docs builds is wrong as-is :(
-        print("comment_badge(), pr={}, num={}, url={}, badge_text={}".format(pr, num, url, badge_text))
-        badge_icon = "{url}/buildStatus/icon?job={job}&build={num}".format(
-            url=self.jenkins.url, job=self.jenkins.job_name, num=num
+        print("comment_badge(), pr={}, job_number={}, job_url={}, badge_text={}".format(pr, job_number, job_url, badge_text))
+        regex = "{}job/([-a-z]+)/{}".format(self.jenkins.url, job_number)
+        print("regex = {}".format(regex))
+        p = re.compile(regex)
+        print("p = {}".format(p))
+        match = p.match(job_url)
+        print("match is {}".format(match))
+        job = match.group(1)
+        print("job is {}".format(job))
+        badge_icon = "{url}/buildStatus/icon?job={job}&build={job_number}".format(
+            url=self.jenkins.url, job=job, job_number=job_number
         )
-        badge_link = "{url}/job/{job}/{num}/".format(
-            url=self.jenkins.url, job=self.jenkins.job_name, num=num
+        badge_link = "{url}/job/{job}/{job_number}/".format(
+            url=self.jenkins.url, job=job, job_number=job_number
         )
         badge = "[![Build Status]({})]({})".format(badge_icon, badge_link)
         response = random.choice(self.response_choices)
         if badge_text:
             badge_text = "\n\n" + badge_text  # Under looks better
         buildcache = "http://buildcache.cfengine.com"
-        packages = "{}/packages/testing-pr/jenkins-pr-pipeline-{}/".format(
-            buildcache, num
+        packages = "{}/packages/testing-pr/jenkins-{}-{}/".format(
+            buildcache, job, job_number
         )
         new_comment = "{}, I triggered a build:\n\n{}{}\n\n**Jenkins:** {}\n\n**Packages:** {}".format(
-            response, badge, badge_text, url, packages
+            response, badge, badge_text, job_url, packages
         )
         # TODO, if a build-and-deploy was triggered, include documentation
         if pr.short_repo_name.startswith("documentation"):
             docs = "{}/packages/build-documentation-pr/jenkins-pr-pipeline-{}/output/_site/".format(
-                buildcache, num
+                buildcache, job_number
             )
             new_comment += "\n\n**Documentation:** {}".format(docs)
         self.comment(pr, new_comment)
