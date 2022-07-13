@@ -55,7 +55,6 @@ class Jenkins:
         user=None,
         docs=False,
         no_tests=False,
-        docs_branch="",  # path to which to upload docs on buildcache
     ):
         params = {}
         need_slow_build = [
@@ -89,10 +88,13 @@ class Jenkins:
             description = "{} @{} ({})".format(title, user, branches)
         else:
             description = "Unnamed build ({})".format(user)
+        # both build-and-deploy-docs types (fast and regular) can use "pr" as the DOCS_BRANCH/BRANCH
+        # this translates to a docs URL of http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-pr-pipeline-52/output/_site/
+        # which includes after build-documentation-pr folder, a folder for the specific pipeline build
         if "/build-and-deploy-docs" in path:
-            params["DOCS_BRANCH"] = docs_branch
+            params["DOCS_BRANCH"] = "pr"
         if "fast-build-and-deploy-docs" in path:
-            params["BRANCH"] = docs_branch
+            params["BRANCH"] = "pr"
         if "fast-build-and-deploy-docs" not in path:
             if prs:
                 for repo in prs:

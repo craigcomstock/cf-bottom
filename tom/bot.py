@@ -239,7 +239,6 @@ class Bot:
             comment.author,
             docs,
             no_tests,
-            "{}-{}".format(pr.short_repo_name, pr.number),
         )
 
         queue_url = headers["Location"]

@@ -104,7 +104,7 @@ def test_all_options_build():
         "https://ci.cfengine.com/job/build-and-deploy-docs-3.18/buildWithParameters/api/json",
         data={
             "RUN_ON_EXOTICS": True,
-            "DOCS_BRANCH": "documentation-47",
+            "DOCS_BRANCH": "pr",
             "DOCS_REV": "47",
             "CORE_REV": "42",
             "NOVA_REV": "43",
@@ -135,7 +135,7 @@ def test_fast_docs_build_318():
         "https://ci.cfengine.com/job/fast-build-and-deploy-docs-3.18/buildWithParameters/api/json",
         data={
             "BUILD_DESC": "Test PR Title @test-trusted-author (documentation#42 documentation-generator#43 3.18)",
-            "BRANCH": "documentation-42",
+            "BRANCH": "pr",
         },
         headers={"Jenkins-Crumb": "test-jenkins-crumb"},
         auth=ANY,
@@ -156,7 +156,7 @@ def test_slow_docs_build():
             "DOCS_REV": "42",
             "BASE_BRANCH": "master",
             "BUILD_DESC": "Test PR Title @test-trusted-author (core#43 documentation#42 master)",
-            "DOCS_BRANCH": "core-43",
+            "DOCS_BRANCH": "pr",
         },
         headers={"Jenkins-Crumb": "test-jenkins-crumb"},
         auth=ANY,
