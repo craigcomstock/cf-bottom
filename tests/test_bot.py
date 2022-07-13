@@ -117,12 +117,17 @@ def test_fast_docs_build_318():
   )
 
 
-#def test_slow_docs_build():
-#  github_requests, jenkins_requests = _trigger_build(
-#    repo="documentation",
-#    prs={"documentation: 42, "core": 43}
-#"documentation": 42,
-#"core": 43
+def test_slow_docs_build():
+  github_requests, jenkins_requests = _trigger_build(
+    repo="core",
+    prs={"documentation": 42, "core": 43},
+    comment="@cf-bottom build yeah?"
+  )
+  github_requests.post.assert_called_once()
+  jenkins_requests.post.assert_called_once_with(
+    'https://ci.cfengine.com/job/build-and-deploy-docs-master/buildWithParameters/api/json', data={'CORE_REV': '43', 'DOCS_REV': '42', 'BASE_BRANCH': 'master', 'BUILD_DESC': 'Test PR Title @test-trusted-author (core#43 documentation#42 master)'}, headers={'Jenkins-Crumb': 'test-jenkins-crumb'}, auth=ANY
+  )
+
 #def test_fast_docs_build_master():
 # difference here is that a build requested in core
 # with a documentation PR mention will build fast
