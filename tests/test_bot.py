@@ -18,9 +18,6 @@ def test_trigger_build_basic():
         auth=ANY,
     )
 
-    # NOTE: below we test for the entire body of the bot comment back to the PR
-    # generally we should just use ANY instead since we don't want to have to change
-    # a bunch of tests here if we refactor the message in the main code.
     github_requests.post.assert_called_once_with(
         "https://github.com/cfengine/core/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
@@ -51,7 +48,9 @@ def test_exotics_build():
     github_requests.post.assert_called_once_with(
         "https://github.com/cfengine/core/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
-        json=ANY,
+        json={
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n(with exotics)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
+        },
     )
 
 
@@ -76,7 +75,9 @@ def test_notest_build():
     github_requests.post.assert_called_once_with(
         "https://github.com/cfengine/core/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
-        json=ANY,
+        json={
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n [NO TESTS]\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
+        },
     )
 
 
@@ -99,7 +100,13 @@ def test_all_options_build():
     )
     # github comment response is really the same every time, so just make sure it was called
     # the actual message is covered in another test above
-    github_requests.post.assert_called_once()
+    github_requests.post.assert_called_once_with(
+        "https://github.com/cfengine/documentation/pulls/47/comment_reference",
+        headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
+        json={
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-3.18/22/)\n\n(with exotics) [NO TESTS]\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-3.18-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-build-and-deploy-docs-3.18-22/output/_site/"
+        },
+    )
     jenkins_requests.post.assert_called_once_with(
         "https://ci.cfengine.com/job/build-and-deploy-docs-3.18/buildWithParameters/api/json",
         data={
@@ -130,7 +137,13 @@ def test_fast_docs_build_318():
         comment="@cf-bottom trigger please",
         base_branch="3.18",
     )
-    github_requests.post.assert_called_once()
+    github_requests.post.assert_called_once_with(
+        "https://github.com/cfengine/documentation/pulls/42/comment_reference",
+        headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
+        json={
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=fast-build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/fast-build-and-deploy-docs-3.18/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-fast-build-and-deploy-docs-3.18-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-fast-build-and-deploy-docs-3.18-22/output/_site/"
+        },
+    )
     jenkins_requests.post.assert_called_once_with(
         "https://ci.cfengine.com/job/fast-build-and-deploy-docs-3.18/buildWithParameters/api/json",
         data={
@@ -150,7 +163,13 @@ def test_slow_docs_build():
         prs={"documentation": 42, "core": 43},
         comment="@cf-bottom build yeah?",
     )
-    github_requests.post.assert_called_once()
+    github_requests.post.assert_called_once_with(
+        "https://github.com/cfengine/core/pulls/43/comment_reference",
+        headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
+        json={
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-master&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-master/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-master-22/"
+        },
+    )
     jenkins_requests.post.assert_called_once_with(
         "https://ci.cfengine.com/job/build-and-deploy-docs-master/buildWithParameters/api/json",
         data={
