@@ -253,17 +253,17 @@ def _trigger_build(
     job_number = "22"
 
     def post_effect(path, data, headers, auth):
-        jenkins_requests._path = path.replace("buildWithParameters/api/json","")
+        jenkins_requests._path = path.replace("buildWithParameters/api/json", "")
         print("saving _path = {}".format(jenkins_requests._path))
         response = MagicMock(
             status_code=200,
         )
-        response.json.return_value =             {
-                "executable": {
-                    "number": job_number,
-                    "url": "{}{}".format(jenkins_requests._path, job_number),
-                }
+        response.json.return_value = {
+            "executable": {
+                "number": job_number,
+                "url": "{}{}".format(jenkins_requests._path, job_number),
             }
+        }
         return response
 
     def get_effect(path, headers, auth):
@@ -271,13 +271,14 @@ def _trigger_build(
         response = MagicMock(
             status_code=200,
         )
-        response.json.return_value =             {
-                "executable": {
-                    "number": job_number,
-                    "url": "{}{}".format(jenkins_requests._path, job_number),
-                }
+        response.json.return_value = {
+            "executable": {
+                "number": job_number,
+                "url": "{}{}".format(jenkins_requests._path, job_number),
+            }
         }
         return response
+
     jenkins_requests.post.side_effect = post_effect
 
     jenkins_requests.get.side_effect = get_effect
