@@ -74,9 +74,8 @@ class Jenkins:
             if "documentation" in prs:
                 job = "build-and-deploy-docs-{}".format(branch)
                 no_tests = False
-        print("job is {}".format(job))
+                params["CONFIGURATIONS_FILTER"] = "" # clear this out so all default packages are generated and tested
         path = "{}job/{}/buildWithParameters/api/json".format(self.url, job)
-        print("path is {}".format(path))
         branches = ["{}#{}".format(r, p) for r, p in prs.items()]
         branches.append(branch)
         branches = " ".join(branches)

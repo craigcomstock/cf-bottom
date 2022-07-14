@@ -178,6 +178,7 @@ def test_slow_docs_build():
             "BASE_BRANCH": "master",
             "BUILD_DESC": "Test PR Title @test-trusted-author (core#43 documentation#42 master)",
             "DOCS_BRANCH": "pr",
+            "CONFIGURATIONS_FILTER": "",
         },
         headers={"Jenkins-Crumb": "test-jenkins-crumb"},
         auth=ANY,
