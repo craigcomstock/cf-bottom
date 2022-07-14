@@ -181,23 +181,12 @@ class Bot:
     def comment_badge(self, pr, job_number, job_url, badge_text):
         # job_url is something like this: url=https://ci.cfengine.com/job/build-and-deploy-docs-master/22
         # so we can parse out the job name, the bit after job/ and before /{job_number}
-        # TODO ooh boy, lots going on here, gonna have to refactor pretty hard
-        # maybe parse URL contents instead of saying we "just know", like pr-pipeline
-        # yeah, the existing badge URL for docs builds is wrong as-is :(
-        print(
-            "comment_badge(), pr={}, job_number={}, job_url={}, badge_text={}".format(
-                pr, job_number, job_url, badge_text
-            )
-        )
         regex = "{}job/([-a-z0-9\\.]+)/{}".format(self.jenkins.url, job_number)
-        print("regex = {}".format(regex))
         p = re.compile(regex)
-        print("p = {}".format(p))
         match = p.match(job_url)
-        # todo guard against no match and error about not conforming to job name expectations
-        print("match is {}".format(match))
+        if not match or len(match.groups()) != 1:
+            log.error("job_url, {}, didn't match expected format regex, {}".format(job_url, regex))
         job = match.group(1)
-        print("job is {}".format(job))
         badge_icon = "{url}/buildStatus/icon?job={job}&build={job_number}".format(
             url=self.jenkins.url, job=job, job_number=job_number
         )
@@ -215,10 +204,9 @@ class Bot:
         new_comment = "{}, I triggered a build:\n\n{}{}\n\n**Jenkins:** {}\n\n**Packages:** {}".format(
             response, badge, badge_text, job_url, packages
         )
-        # TODO, if a build-and-deploy was triggered, include documentation
-        if pr.short_repo_name.startswith("documentation"):
-            docs = "{}/packages/build-documentation-pr/jenkins-pr-pipeline-{}/output/_site/".format(
-                buildcache, job_number
+        if "build-and-deploy" in job:
+            docs = "{}/packages/build-documentation-pr/jenkins-{}-{}/output/_site/".format(
+                buildcache, job, job_number
             )
             new_comment += "\n\n**Documentation:** {}".format(docs)
         self.comment(pr, new_comment)

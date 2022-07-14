@@ -167,7 +167,7 @@ def test_slow_docs_build():
         "https://github.com/cfengine/core/pulls/43/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-master&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-master/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/build-and-deploy-docs-master/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-master-22/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-master&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-master/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/build-and-deploy-docs-master/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-master-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-build-and-deploy-docs-master-22/output/_site/"
         },
     )
     jenkins_requests.post.assert_called_once_with(
