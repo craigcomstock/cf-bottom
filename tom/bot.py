@@ -205,10 +205,12 @@ class Bot:
         packages = "{}/packages/testing-pr/jenkins-{}-{}/".format(
             buildcache, job, job_number
         )
-        new_comment = "{}, I triggered a build:\n\n{}{}\n\n**Jenkins:** {}\n\n**Packages:** {}".format(
-            response, badge, badge_text, job_url, packages
+        new_comment = "{}, I triggered a build:\n\n{}{}\n\n**Jenkins:** {}".format(
+            response, badge, badge_text, job_url
         )
-        if "build-and-deploy" in job:
+        if "fast-build-and-deploy-docs" not in job:
+            new_comment += "\n\n**Packages:** {}".format(packages)
+        if "build-and-deploy-docs" in job:
             docs = (
                 "{}/packages/build-documentation-pr/jenkins-{}-{}/output/_site/".format(
                     buildcache, job, job_number

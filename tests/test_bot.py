@@ -141,7 +141,7 @@ def test_fast_docs_build_318():
         "https://github.com/cfengine/documentation/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=fast-build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/fast-build-and-deploy-docs-3.18/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/fast-build-and-deploy-docs-3.18/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-fast-build-and-deploy-docs-3.18-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-fast-build-and-deploy-docs-3.18-22/output/_site/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=fast-build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/fast-build-and-deploy-docs-3.18/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/fast-build-and-deploy-docs-3.18/22\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-fast-build-and-deploy-docs-3.18-22/output/_site/"
         },
     )
     jenkins_requests.post.assert_called_once_with(
