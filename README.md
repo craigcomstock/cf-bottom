@@ -87,3 +87,13 @@ Here is an example of what the secrets file can look like:
 
 Most of the codebase works by polling open pull requests, rather than having a web server wait for Webhooks.
 There is one exception, the optional slack bot, which can be triggered from mentions in Slack.
+
+for testing, create a PR on core and on documentation, then cross-polinate with different descriptions and comments
+change username to cf-testtom
+
+https://github.com/cfengine/core/pull/4992
+
+make a flag like --url to dig RIGHT into the meat of pulling that PRs info and submitting it with the comment to tom/bot.py trigger_build() aka handle_comment()
+def handle_comments(self, pr):
+
+tranlates to https://api.github.com/repos/cfengine/core/pulls/4992

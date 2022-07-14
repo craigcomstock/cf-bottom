@@ -11,5 +11,6 @@ directory=""
 interactive=True
 reports=Reports("")
 bot = setup_bot(directory, interactive, bot_data, reports)
-bot.handle_pull_url("https://api.github.com/repos/cfengine/core/pulls/4992")
+#bot.handle_pull_url("https://api.github.com/repos/cfengine/core/pulls/4992")
 #bot.handle_pull_url("https://github.com/cfengine/documentation/pull/2772")
+bot.handle_pull_url("https://github.com/cfengine/core/pull/4992")

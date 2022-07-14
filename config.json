@@ -1,7 +1,7 @@
 {
   "bots": [
     {
-      "username": "cf-bottom",
+      "username": "cf-testtom",
       "secrets": "cfengine-secrets.json",
       "trusted": [
         "nickanderson",
@@ -39,24 +39,12 @@
       },
       "orgs": ["cfengine"],
       "jenkins_repos": [
-        "libntech",
         "core",
-        "enterprise",
-        "nova",
-        "masterfiles",
-        "mission-portal",
-        "buildscripts"
+        "documentation"
       ],
       "repos": {
         "cfengine/core": ["olehermanse", "vpodzime"],
-        "cfengine/enterprise": ["olehermanse", "vpodzime", "craigcomstock"],
-        "cfengine/nova": ["olehermanse", "vpodzime", "craigcomstock"],
-        "cfengine/masterfiles": ["craigcomstock", "nickanderson"],
-        "cfengine/buildscripts": ["craigcomstock", "Lex-2008"],
-        "cfengine/documentation": ["nickanderson", "craigcomstock"],
-        "cfengine/contrib": ["nickanderson"],
-        "cfengine/cf-bottom": ["olehermanse", "vpodzime", "cf-bottom"],
-        "cfengine/mission-portal": ["craigcomstock", "aleksandrychev"]
+        "cfengine/documentation": ["nickanderson", "craigcomstock"]
       }
     },
     {

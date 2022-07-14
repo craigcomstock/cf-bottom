@@ -305,6 +305,16 @@ class Bot:
             pr.reviewers = self.default_maintainers
         pr.reviewer = random.choice(pr.reviewers)
 
+    def handle_pull_url(self, pull_url):
+        print("handle_pull_url({})".format(pull_url))
+        # translate, if need be, a human-usable PR URL to an API URL
+        pull_url = pull_url.replace("//github.com/", "//api.github.com/repos/")
+        print("first transformation: {}".format(pull_url))
+        pull_url = pull_url.replace("/pull/", "/pulls/")
+        print("second transformation: {}".format(pull_url))
+        pull = self.github.get(pull_url)
+        self.handle_pr(pull)
+
     def handle_pr(self, pr):
         url = pr["url"].replace("https://api.github.com/repos/", "")
         log.info("Looking at: {} ({})".format(pr["title"], pr["html_url"]))

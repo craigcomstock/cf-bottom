@@ -74,6 +74,14 @@ def run_all_bots(directory, interactive):
 def get_args():
     argparser = argparse.ArgumentParser(description="CFEngine Bot, Tom")
     argparser.add_argument(
+        "--github-url",
+        help=(
+            "Process only the provided github PR URL; "
+            "use with --interactive for development."
+        ),
+        action="store_true",
+    )
+    argparser.add_argument(
         "--interactive",
         "-i",
         help=(
