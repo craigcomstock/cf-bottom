@@ -185,11 +185,12 @@ class Bot:
         # maybe parse URL contents instead of saying we "just know", like pr-pipeline
         # yeah, the existing badge URL for docs builds is wrong as-is :(
         print("comment_badge(), pr={}, job_number={}, job_url={}, badge_text={}".format(pr, job_number, job_url, badge_text))
-        regex = "{}job/([-a-z]+)/{}".format(self.jenkins.url, job_number)
+        regex = "{}job/([-a-z0-9\\.]+)/{}".format(self.jenkins.url, job_number)
         print("regex = {}".format(regex))
         p = re.compile(regex)
         print("p = {}".format(p))
         match = p.match(job_url)
+        # todo guard against no match and error about not conforming to job name expectations
         print("match is {}".format(match))
         job = match.group(1)
         print("job is {}".format(job))

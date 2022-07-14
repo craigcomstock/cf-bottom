@@ -22,7 +22,7 @@ def test_trigger_build_basic():
         "https://github.com/cfengine/core/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/pr-pipeline/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
         },
     )
 
@@ -49,7 +49,7 @@ def test_exotics_build():
         "https://github.com/cfengine/core/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n(with exotics)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n(with exotics)\n\n**Jenkins:** https://ci.cfengine.com/job/pr-pipeline/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
         },
     )
 
@@ -76,7 +76,7 @@ def test_notest_build():
         "https://github.com/cfengine/core/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n [NO TESTS]\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=pr-pipeline&build=22)](https://ci.cfengine.com//job/pr-pipeline/22/)\n\n [NO TESTS]\n\n**Jenkins:** https://ci.cfengine.com/job/pr-pipeline/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-pr-pipeline-22/"
         },
     )
 
@@ -104,7 +104,7 @@ def test_all_options_build():
         "https://github.com/cfengine/documentation/pulls/47/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-3.18/22/)\n\n(with exotics) [NO TESTS]\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-3.18-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-build-and-deploy-docs-3.18-22/output/_site/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-3.18/22/)\n\n(with exotics) [NO TESTS]\n\n**Jenkins:** https://ci.cfengine.com/job/build-and-deploy-docs-3.18/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-3.18-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-build-and-deploy-docs-3.18-22/output/_site/"
         },
     )
     jenkins_requests.post.assert_called_once_with(
@@ -141,7 +141,7 @@ def test_fast_docs_build_318():
         "https://github.com/cfengine/documentation/pulls/42/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=fast-build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/fast-build-and-deploy-docs-3.18/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-fast-build-and-deploy-docs-3.18-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-fast-build-and-deploy-docs-3.18-22/output/_site/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=fast-build-and-deploy-docs-3.18&build=22)](https://ci.cfengine.com//job/fast-build-and-deploy-docs-3.18/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/fast-build-and-deploy-docs-3.18/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-fast-build-and-deploy-docs-3.18-22/\n\n**Documentation:** http://buildcache.cfengine.com/packages/build-documentation-pr/jenkins-fast-build-and-deploy-docs-3.18-22/output/_site/"
         },
     )
     jenkins_requests.post.assert_called_once_with(
@@ -167,7 +167,7 @@ def test_slow_docs_build():
         "https://github.com/cfengine/core/pulls/43/comment_reference",
         headers={"Authorization": "token test-github-token", "User-Agent": "cf-bottom"},
         json={
-            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-master&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-master/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/something/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-master-22/"
+            "body": "Predictably, I triggered a build:\n\n[![Build Status](https://ci.cfengine.com//buildStatus/icon?job=build-and-deploy-docs-master&build=22)](https://ci.cfengine.com//job/build-and-deploy-docs-master/22/)\n\n**Jenkins:** https://ci.cfengine.com/job/build-and-deploy-docs-master/22\n\n**Packages:** http://buildcache.cfengine.com/packages/testing-pr/jenkins-build-and-deploy-docs-master-22/"
         },
     )
     jenkins_requests.post.assert_called_once_with(
