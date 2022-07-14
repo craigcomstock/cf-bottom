@@ -185,7 +185,11 @@ class Bot:
         p = re.compile(regex)
         match = p.match(job_url)
         if not match or len(match.groups()) != 1:
-            log.error("job_url, {}, didn't match expected format regex, {}".format(job_url, regex))
+            log.error(
+                "job_url, {}, didn't match expected format regex, {}".format(
+                    job_url, regex
+                )
+            )
         job = match.group(1)
         badge_icon = "{url}/buildStatus/icon?job={job}&build={job_number}".format(
             url=self.jenkins.url, job=job, job_number=job_number
@@ -205,8 +209,10 @@ class Bot:
             response, badge, badge_text, job_url, packages
         )
         if "build-and-deploy" in job:
-            docs = "{}/packages/build-documentation-pr/jenkins-{}-{}/output/_site/".format(
-                buildcache, job, job_number
+            docs = (
+                "{}/packages/build-documentation-pr/jenkins-{}-{}/output/_site/".format(
+                    buildcache, job, job_number
+                )
             )
             new_comment += "\n\n**Documentation:** {}".format(docs)
         self.comment(pr, new_comment)
